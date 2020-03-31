@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Infrastructure\Git;
+namespace App\Git;
 
 use App\Git\Branch;
 use App\Git\Commit;
@@ -24,19 +24,19 @@ class Git
      * @param string $repoDirectory
      * @param ProjectPathCli $cli
      */
-    public function __construct($repoDirectory, ProjectPathCli $cli)
+    public function __construct(ProjectPathCli $cli)
     {
-        $this->repoDirectory = $repoDirectory;
+        $this->repoDirectory = $cli->projectDirectory();
         $this->cli = $cli;
         $this->blameCache = [];
     }
 
     /**
-     * @param Commit $mergeBase
-     * @param Commit $current
+     * @param Pointer $mergeBase
+     * @param Pointer $current
      * @return RelativeFile[]
      */
-    public function getNewlyAddedFiles(Commit $mergeBase, Commit $current)
+    public function getNewlyAddedFiles(Pointer $mergeBase, Pointer $current)
     {
         $untrackedNonIgnoredFiles = $this->getUntrackedNonIgnoredFiles();
         $stagedNewFiles = $this->getStagedNewFiles();
@@ -61,13 +61,13 @@ class Git
     }
 
     /**
-     * @param Commit $current
-     * @param Commit $mergeBase
+     * @param Pointer $current
+     * @param Pointer $mergeBase
      * @return Commit[]
      */
-    public function getCommitsBetween(Commit $mergeBase, Commit $current)
+    public function getCommitsBetween(Pointer $mergeBase, Pointer $current)
     {
-        $shellCommand = "git log --pretty=tformat:\"%H\" --ancestry-path {$mergeBase->getHash()}..{$current->getHash()}";
+        $shellCommand = "git log --pretty=tformat:\"%H\" --ancestry-path {$mergeBase->getName()}..{$current->getName()}";
         $commitList = $this->cli->getResultArray($shellCommand);
         $allCommits = [];
         foreach ($commitList as $commitHash) {
@@ -137,9 +137,9 @@ class Git
      * @param Commit $current
      * @return RelativeFile[]
      */
-    public function getModifiedFiles(Commit $mergeBase, Commit $current)
+    public function getModifiedFiles(Pointer $mergeBase, Pointer $current)
     {
-        $shellCommand = "git diff --diff-filter=d --name-only {$mergeBase->getHash()} {$current->getHash()} --raw";
+        $shellCommand = "git diff --diff-filter=d --name-only {$mergeBase->getName()} {$current->getName()} --raw";
         $modifiedFiles = $this->cli->getResultArray($shellCommand);
 
         return $this->toRelativeFiles($modifiedFiles);
@@ -301,14 +301,14 @@ class Git
     }
 
     /**
-     * @param Commit $mergeBase
-     * @param Commit $current
+     * @param Pointer $mergeBase
+     * @param Pointer $current
      * @return RelativeFile[]
      * @see https://stackoverflow.com/a/15535048
      */
-    private function getCommittedNewFiles(Commit $mergeBase, Commit $current)
+    private function getCommittedNewFiles(Pointer $mergeBase, Pointer $current)
     {
-        $shellCommand = "git diff --diff-filter=A --name-only {$mergeBase->getHash()} {$current->getHash()} --raw";
+        $shellCommand = "git diff --diff-filter=A --name-only {$mergeBase->getName()} {$current->getName()} --raw";
         $untrackedNonIgnoredFiles = $this->cli->getResultArray($shellCommand);
 
         return $this->toRelativeFiles($untrackedNonIgnoredFiles);

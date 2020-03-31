@@ -57,6 +57,11 @@ class BranchComparer
     }
 
     /**
+     * TODO: We should always check against origin. Need to:
+     *  1. Know the origin name (default to origin)
+     *  2. Enforce "git fetch --all" before checking..
+     *  3. Prepend origin to all checks
+     *
      * @param Branch $currentBranch
      * @return Branch
      */

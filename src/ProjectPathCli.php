@@ -16,6 +16,14 @@ class ProjectPathCli
     }
 
     /**
+     * @return string
+     */
+    public function projectDirectory()
+    {
+        return $this->projectDirectory;
+    }
+
+    /**
      * @param string $command
      * @param string|null $stdIn
      * @return string

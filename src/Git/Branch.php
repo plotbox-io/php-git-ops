@@ -2,7 +2,7 @@
 
 namespace App\Git;
 
-class Branch
+class Branch implements Pointer
 {
     /** @var string */
     private $name;

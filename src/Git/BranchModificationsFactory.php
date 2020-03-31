@@ -18,14 +18,14 @@ class BranchModificationsFactory
     }
 
     /**
-     * @param Commit $mergeBase
-     * @param Commit $current
+     * @param Pointer $mergeBase
+     * @param Pointer $current
      * @param RelativeFile|null $singleTargetFile
      * @return BranchModifications
      */
-    public function getBranchModifications(Commit $mergeBase, Commit $current, RelativeFile $singleTargetFile = null)
+    public function getBranchModifications(Pointer $mergeBase, Pointer $current, RelativeFile $singleTargetFile = null)
     {
-        $cacheKey = $mergeBase->getHash() . '~' . $current->getHash();
+        $cacheKey = $mergeBase->getName() . '~' . $current->getName();
         if (isset($this->branchModificationsCached[$cacheKey])) {
             return $this->branchModificationsCached[$cacheKey];
         }
