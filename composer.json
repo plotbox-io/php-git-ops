@@ -1,5 +1,19 @@
 {
+  "name": "plotbox-io/php-git-ops",
+  "description": "PHP wrapper around git designed to help with dev-ops needs",
+  "type": "library",
+  "keywords": [],
+  "license": "MIT",
+  "version": "v0.4.0",
+  "authors": [
+    {
+      "name": "Richard Paul",
+      "email": "richard.paul@plotbox.io"
+    }
+  ],
+  "minimum-stability": "stable",
   "require": {
+    "php": ">=5.6",
     "ext-json": "*",
     "ext-dom": "*",
     "myclabs/php-enum": "^1.7",
@@ -11,8 +25,7 @@
   },
   "autoload": {
     "psr-4": {
-      "App\\": "src/",
-      "TestHelper\\": "tests/Helper"
+      "App\\": "src/"
     }
   },
   "require-dev": {
