@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
-use App\CodeIssue;
-use App\RelativeFile;
+use PlotBox\PhpGitOps\CodeIssue;
+use PlotBox\PhpGitOps\RelativeFile;
 
 class LineFilter
 {

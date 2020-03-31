@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
-use App\Util\StringUtil;
+use PlotBox\PhpGitOps\Util\StringUtil;
 
 class BranchComparer
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
-use App\ProjectPathCli;
-use App\RelativeFile;
+use PlotBox\PhpGitOps\ProjectPathCli;
+use PlotBox\PhpGitOps\RelativeFile;
 use RuntimeException;
 
 class Git

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Util;
+namespace PlotBox\PhpGitOps\Util;
 
 class StringUtil
 {

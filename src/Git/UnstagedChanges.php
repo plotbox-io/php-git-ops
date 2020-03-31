@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
-use App\RelativeFile;
+use PlotBox\PhpGitOps\RelativeFile;
 
 /**
  * Value object holding data on the lines that have been touched that

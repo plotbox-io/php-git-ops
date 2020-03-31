@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
-use App\RelativeFile;
-use App\Util\StringUtil;
+use PlotBox\PhpGitOps\RelativeFile;
+use PlotBox\PhpGitOps\Util\StringUtil;
 
 class FileFilter
 {

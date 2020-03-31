@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Git;
+namespace PlotBox\PhpGitOps\Git;
 
 interface Pointer
 {
