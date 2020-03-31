@@ -31,13 +31,6 @@ class LineFilter
         foreach ($issues as $issue) {
             $file = new RelativeFile($issue->getFile());
             $line = (int) $issue->getLine();
-
-            // Highlight internal exceptions if file was touched in any way at all
-            if (key_exists($file->getPath(), $this->modifiedFiles) && $issue->getSource() === 'Internal.Exception') {
-                $resultIssues[] = $issue;
-                continue;
-            }
-
             if ($this->lineWasTouched($file, $line)) {
                 $resultIssues[] = $issue;
             }

@@ -2,11 +2,6 @@
 
 namespace App\Git;
 
-use App\Git\Branch;
-use App\Git\Commit;
-use App\Git\LineNotExistException;
-use App\Git\LineUnstagedException;
-use App\Git\UnstagedChanges;
 use App\ProjectPathCli;
 use App\RelativeFile;
 use RuntimeException;
@@ -21,13 +16,12 @@ class Git
     private $blameCache;
 
     /**
-     * @param string $repoDirectory
-     * @param ProjectPathCli $cli
+     * @param string $projectPath
      */
-    public function __construct(ProjectPathCli $cli)
+    public function __construct($projectPath)
     {
-        $this->repoDirectory = $cli->projectDirectory();
-        $this->cli = $cli;
+        $this->cli = new ProjectPathCli($projectPath);
+        $this->repoDirectory = $projectPath;
         $this->blameCache = [];
     }
 

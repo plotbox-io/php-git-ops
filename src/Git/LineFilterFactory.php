@@ -9,15 +9,21 @@ class LineFilterFactory
     /** @var BranchModificationsFactory */
     private $branchModificationsFactory;
 
-    public function __construct(Git $gitService, BranchModificationsFactory $branchModificationsFactory)
+    public function __construct(Git $gitService)
     {
         $this->gitService = $gitService;
-        $this->branchModificationsFactory = $branchModificationsFactory;
+        $this->branchModificationsFactory = new BranchModificationsFactory($this->gitService);
     }
 
-    public function makeLineFilter(Branch $ancestorBranch)
+    /**
+     * @return LineFilter
+     */
+    public function makeLineFilter()
     {
+        $branchComparer = new BranchComparer($this->gitService);
         $currentBranch = $this->gitService->getCurrentBranch();
+        $ancestorBranch = $branchComparer->getAncestorBranch($currentBranch);
+
         $branchModifications = $this->branchModificationsFactory->getBranchModifications(
             $this->gitService->getMergeBase($ancestorBranch, $currentBranch),
             $this->gitService->getLatestCommit($currentBranch)
