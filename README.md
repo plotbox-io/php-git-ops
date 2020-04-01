@@ -10,6 +10,13 @@ when dealing with legacy code-bases where you want to tackle code smells bit by 
 
 ### Example Usage
 
+#### Get all 'files touched' in current feature branch
+
+```
+$gitService = new GitInfoService();
+$touchedFiles = $gitService->filesTouched('/path/to/some/repo');
+```
+
 #### Filter issues by 'lines touched' in current branch 
 
 The logic will consider files added, and modified (unstaged, staged, comitted), 
