@@ -8,8 +8,8 @@ class CodeIssue
     private $file;
     /** @var int */
     private $line;
-    /** @var string */
-    private $uniqueReference;
+    /** @var mixed */
+    private $attachment;
 
     /**
      * @param RelativeFile $file
@@ -26,17 +26,17 @@ class CodeIssue
      *
      * @param string $file
      * @param int $line
-     * @param null $uniqueRef
+     * @param mixed|null $attachment
      * @return static
      */
-    public static function make($file, $line, $uniqueRef = null)
+    public static function make($file, $line, $attachment = null)
     {
         $instance = new static(
             new RelativeFile($file),
             $line
         );
-        if ($uniqueRef) {
-            $instance->setUniqueReference($uniqueRef);
+        if ($attachment) {
+            $instance->setAttachment($attachment);
         }
 
         return $instance;
@@ -45,17 +45,17 @@ class CodeIssue
     /**
      * @return string
      */
-    public function getUniqueReference()
+    public function getAttachment()
     {
-        return $this->uniqueReference;
+        return $this->attachment;
     }
 
     /**
-     * @param string $uniqueReference
+     * @param string $attachment
      */
-    public function setUniqueReference($uniqueReference)
+    public function setAttachment($attachment)
     {
-        $this->uniqueReference = $uniqueReference;
+        $this->attachment = $attachment;
     }
 
     /**

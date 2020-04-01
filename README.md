@@ -21,7 +21,7 @@ $git = new Git('/path/to/some/repo-directory');
 $lineFilterFactory = new LineFilterFactory($git);
 $lineFilter = $lineFilterFactory->makeLineFilter();
 
-// Pass in ci-issues to be filtered
+// Pass in ci-issues to be filtered (third parameter 'attachment' can be anything you like)
 $issues = [
     CodeIssue::make('devops/git/post-merge', 123, 'abc123'),
     CodeIssue::make('static/maintenance.html', 456, 'abc456')
