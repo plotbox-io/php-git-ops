@@ -4,6 +4,7 @@ namespace PlotBox\PhpGitOps\Git;
 
 use PlotBox\PhpGitOps\ProjectPathCli;
 use PlotBox\PhpGitOps\RelativeFile;
+use PlotBox\PhpGitOps\Util\StringUtil;
 use RuntimeException;
 
 class Git
@@ -231,9 +232,21 @@ class Git
         return new Commit($commitHash);
     }
 
+    /**
+     * Checks if a branch exists locally. If origin/some-branch is given, the existence of
+     * a local branch with the same name will be checked instead
+     *
+     * @param Branch $branch
+     * @return bool
+     */
     public function branchExists(Branch $branch)
     {
-        $shellCommand = "git show-ref --verify --quiet refs/heads/{$branch->getName()} && echo 'YES' || echo 'NO'";
+        $branchName = $branch->getName();
+        if (StringUtil::startsWith($branchName, 'origin/')) {
+            $branchName = StringUtil::trimFromStart('origin/', $branchName);
+        }
+
+        $shellCommand = "git show-ref --verify --quiet refs/heads/{$branchName} && echo 'YES' || echo 'NO'";
         $result = $this->cli->getResultString($shellCommand);
         return $result === 'YES';
     }

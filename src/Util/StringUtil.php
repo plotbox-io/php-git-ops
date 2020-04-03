@@ -13,4 +13,14 @@ class StringUtil
     {
         return substr($haystack, 0, strlen($needle)) === $needle;
     }
+
+    /**
+     * @param string $needle
+     * @param string $haystack
+     * @return string
+     */
+    public static function trimFromStart($needle, $haystack)
+    {
+        return $str = substr($haystack, strlen($needle));
+    }
 }
