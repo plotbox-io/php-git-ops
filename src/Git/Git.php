@@ -80,27 +80,43 @@ class Git
     {
         $changes = new UnstagedChanges();
 
-        $shellCommand = "git diff --unified=0 | grep -Po '^\+\+\+ ./\K.*|^\+\+\+ \K\/dev\/null|^@@ -[0-9]+(,[0-9]+)? \+\K[0-9]+(,[0-9]+)?(?= @@)'";
-        $commandResultLines = $this->cli->getResultArray($shellCommand);
+        $modifiedFileRegex = '#^\+\+\+ .\/(.*)#';
+        $nullFileRegex = '#^\+\+\+ (\/dev\/null)#';
+        $changedLinesRegex = '#^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+(?:,[0-9]+)?)(?= @@)#';
+        $unifiedDiffResult = $this->cli->getResultArray('git diff --unified=0');
 
         $currentFilePath = null;
-        foreach ($commandResultLines as $resultLine) {
+        foreach ($unifiedDiffResult as $resultLine) {
+            $matchedText = null;
+            if (preg_match($modifiedFileRegex, $resultLine, $matches)) {
+                $matchedText = $matches[1];
+            }
+            if (!$matchedText && preg_match($nullFileRegex, $resultLine, $matches)) {
+                $matchedText = $matches[1];
+            }
+            if (!$matchedText && preg_match($changedLinesRegex, $resultLine, $matches)) {
+                $matchedText = $matches[1];
+            }
+            if (!$matchedText) {
+                continue;
+            }
+
             // /dev/null is used to signal created or deleted files
             // @see https://git-scm.com/docs/git-diff/1.7.5
             // We just ignore these as they are recorded in the changes as new files anyway
             // so diffs will be handled correctly
-            if ($resultLine === '/dev/null') {
-                $currentFilePath = $resultLine;
+            if ($matchedText === '/dev/null') {
+                $currentFilePath = $matchedText;
                 continue;
             }
 
             // Ignore the non-file-path output
-            if (file_exists($this->repoDirectory . '/' . $resultLine)) {
-                $currentFilePath = $resultLine;
+            if (file_exists($this->repoDirectory . '/' . $matchedText)) {
+                $currentFilePath = $matchedText;
                 continue;
             }
 
-            if (!preg_match('|[0-9,]+|', $resultLine)) {
+            if (!preg_match('|[0-9,]+|', $matchedText)) {
                 throw new RuntimeException(
                     "Error: Expecting either valid filenames or unified diff line number syntax"
                 );
@@ -111,7 +127,7 @@ class Git
                 continue;
             }
 
-            $lineData = explode(',', $resultLine);
+            $lineData = explode(',', $matchedText);
             $startLine = (int) $lineData[0];
             $count = count($lineData) === 1 ? 1 : (int) $lineData[1];
             $lastLine = $startLine + $count;
