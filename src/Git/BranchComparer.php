@@ -12,17 +12,16 @@ class BranchComparer
     const BRANCH_DEVELOP = 'origin/develop';
     /** @internal */
     const CORE_BRANCH_NUM_BACK_FOR_DIFF = 10;
-    /** @internal */
-    const FIXED_STANDARD_ANCESTORS = [
-        self::BRANCH_MASTER,
-        self::BRANCH_DEVELOP,
-    ];
-    /** @internal */
-    const GLOB_STANDARD_ANCESTORS = [
+    /** @var string[] */
+    private static $globStandardAncestors = [
         'origin/sprint/*',
         'origin/release/*',
     ];
-
+    /** @var string[] */
+    private static $fixedStandardAncestors = [
+        self::BRANCH_MASTER,
+        self::BRANCH_DEVELOP,
+    ];
     /** @var Git */
     private $git;
 
@@ -118,14 +117,13 @@ class BranchComparer
     {
         $ancestors = [];
 
-        foreach (self::FIXED_STANDARD_ANCESTORS as $fixedAncestor) {
+        foreach (self::$fixedStandardAncestors as $fixedAncestor) {
             $ancestors[] = new Branch($fixedAncestor);
         }
-        foreach (self::GLOB_STANDARD_ANCESTORS as $ancestorGlob) {
-            array_push(
-                $ancestors,
-                ...$this->git->findBranches($ancestorGlob)
-            );
+        foreach (self::$globStandardAncestors as $ancestorGlob) {
+            foreach ($this->git->findBranches($ancestorGlob) as $foundBranch) {
+                $ancestors[] = $foundBranch;
+            }
         }
 
         return $ancestors;

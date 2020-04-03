@@ -3,19 +3,9 @@
 namespace PlotBox\PhpGitOps\Git;
 
 use PlotBox\PhpGitOps\RelativeFile;
-use PlotBox\PhpGitOps\Util\StringUtil;
 
 class FileFilter
 {
-    /** @internal */
-    const EXCLUDE_DIRS = [
-        'vue2',
-        'tools',
-        'tests',
-        'cache',
-        'config',
-        '.docker'
-    ];
     /** @var string */
     private $projectDirectory;
 
@@ -39,13 +29,6 @@ class FileFilter
             if ($extension !== 'php') {
                 unset($fileList[$key]);
                 continue;
-            }
-
-            foreach (self::EXCLUDE_DIRS as $exludedDir) {
-                if (StringUtil::startsWith($filePath, $exludedDir)) {
-                    unset($fileList[$key]);
-                    continue;
-                }
             }
 
             if (!file_exists($this->projectDirectory . '/' . $filePath)) {
