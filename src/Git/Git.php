@@ -256,6 +256,11 @@ class Git
         return $branchesResult;
     }
 
+    public function fetchAll()
+    {
+        $this->cli->getResultString('git fetch --all');
+    }
+
     /**
      * @param string[] $modifiedFiles
      * @return array

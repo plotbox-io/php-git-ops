@@ -7,9 +7,9 @@ use PlotBox\PhpGitOps\Util\StringUtil;
 class BranchComparer
 {
     /** @internal */
-    const BRANCH_MASTER = 'master';
+    const BRANCH_MASTER = 'origin/master';
     /** @internal */
-    const BRANCH_DEVELOP = 'develop';
+    const BRANCH_DEVELOP = 'origin/develop';
     /** @internal */
     const CORE_BRANCH_NUM_BACK_FOR_DIFF = 10;
     /** @internal */
@@ -19,8 +19,8 @@ class BranchComparer
     ];
     /** @internal */
     const GLOB_STANDARD_ANCESTORS = [
-        'sprint/*',
-        'release/*',
+        'origin/sprint/*',
+        'origin/release/*',
     ];
 
     /** @var Git */
