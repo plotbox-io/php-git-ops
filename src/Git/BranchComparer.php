@@ -83,7 +83,7 @@ class BranchComparer
         // Sort by distance to common ancestor. If there is a tie, the order provided in the
         // STANDARD_ANCESTORS constant will prevail (i.e., master, develop, sub-branches...)
         asort($branchDistances);
-        $topBranchName = array_key_first($branchDistances);
+        $topBranchName = reset($branchDistances);
         return new Branch($topBranchName);
     }
 
