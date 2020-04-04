@@ -80,4 +80,12 @@ class LineFilter
 
         return false;
     }
+
+    /**
+     * @return BranchModifications
+     */
+    public function getBranchModifications()
+    {
+        return $this->branchModifications;
+    }
 }
