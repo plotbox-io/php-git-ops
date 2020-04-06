@@ -50,7 +50,7 @@ class BranchModifications
      * Get the relative file paths for all files that have been modified (including additions,
      * 'unstaged new' files and #staged but uncommitted' files)
      *
-     * @return RelativeFile[]
+     * @return string[]
      */
     public function getModifiedFilePaths()
     {

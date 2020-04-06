@@ -20,10 +20,9 @@ class BranchModificationsFactory
     /**
      * Get modifications for the current branch (auto-detect parent)
      *
-     * @param RelativeFile|null $singleTargetFile
      * @return BranchModifications
      */
-    public function getBranchModifications(RelativeFile $singleTargetFile = null)
+    public function getBranchModifications()
     {
         $branchComparer = new BranchComparer($this->git);
         $currentBranch = $this->git->getCurrentBranch();
@@ -31,17 +30,15 @@ class BranchModificationsFactory
         return $this->getBranchModificationsSpecified(
             $this->git->getMergeBase($ancestorBranch, $currentBranch),
             $this->git->getLatestCommit($currentBranch),
-            $singleTargetFile
         );
     }
 
     /**
      * @param Pointer $ancestorBranch
      * @param Pointer $current
-     * @param RelativeFile|null $singleTargetFile
      * @return BranchModifications
      */
-    public function getBranchModificationsSpecified(Pointer $ancestorBranch, Pointer $current, RelativeFile $singleTargetFile = null)
+    public function getBranchModificationsSpecified(Pointer $ancestorBranch, Pointer $current)
     {
         $mergeBase = $this->git->getMergeBase($ancestorBranch, $current);
         $cacheKey = $mergeBase->getName() . '~' . $current->getName();
@@ -49,7 +46,7 @@ class BranchModificationsFactory
             return $this->branchModificationsCached[$cacheKey];
         }
 
-        $modifiedFiles = $singleTargetFile ? [$singleTargetFile] : $this->git->parseTouchedLines(
+        $modifiedFiles = $this->git->parseTouchedLines(
             new ComparisonDiffCommand(
                 $current,
                 $ancestorBranch
