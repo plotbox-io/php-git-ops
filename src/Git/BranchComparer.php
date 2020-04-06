@@ -56,11 +56,6 @@ class BranchComparer
     }
 
     /**
-     * TODO: We should always check against origin. Need to:
-     *  1. Know the origin name (default to origin)
-     *  2. Enforce "git fetch --all" before checking..
-     *  3. Prepend origin to all checks
-     *
      * @param Branch $currentBranch
      * @return Branch
      */
@@ -68,8 +63,8 @@ class BranchComparer
     {
         $branchDistances = [];
         foreach ($this->getStandardAncestors() as $ancestorBranch) {
-            // Note: If branch doesn't exist locally, we may be checking against an older ancestor
-            // (develop/master), but that shouldn't be too bad..
+            // Note: If branch doesn't exist locally (i.e., sprint or release), we may be checking against
+            // an older ancestor (develop/master), but that shouldn't be too bad..
             if ($this->git->branchExists($ancestorBranch)) {
                 $ancestorBaseCommit = $this->git->getMergeBase($currentBranch, $ancestorBranch);
                 $distance = $this->distance($currentBranch, $ancestorBaseCommit);

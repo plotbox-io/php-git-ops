@@ -10,17 +10,14 @@ class BranchModifications
     private $modifiedFiles;
     /** @var RelativeFile[] */
     private $newFiles;
-    /** @var Commit[] */
-    private $commits;
     /** @var TouchedLines */
     private $unstagedChanges;
     /**
      * @param TouchedLines $modifiedFiles
      * @param RelativeFile[] $newFiles
-     * @param Commit[] $commits
      * @param TouchedLines $unstagedChanges
      */
-    public function __construct(TouchedLines $modifiedFiles, array $newFiles, array $commits, TouchedLines $unstagedChanges)
+    public function __construct(TouchedLines $modifiedFiles, array $newFiles, TouchedLines $unstagedChanges)
     {
         $this->modifiedFiles = $modifiedFiles;
         $this->newFiles = [];
@@ -28,10 +25,6 @@ class BranchModifications
             $this->newFiles[$newFile->getPath()] = $newFile;
         }
         $this->unstagedChanges = $unstagedChanges;
-        $this->commits = [];
-        foreach ($commits as $commit) {
-            $this->commits[$commit->getHash()] = $commit;
-        }
     }
 
     /**

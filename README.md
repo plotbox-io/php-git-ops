@@ -10,25 +10,19 @@ when dealing with legacy code-bases where you want to tackle code smells bit by 
 
 ### Example Usage
 
-#### Get all 'files touched' in current feature branch
-
-```
-$gitService = new GitInfoService();
-$touchedFiles = $gitService->filesTouched('/path/to/some/repo');
-```
-
 #### Filter issues by 'lines touched' in current branch 
 
 The logic will consider files added, and modified (unstaged, staged, comitted), 
 filtering out any issues deemed to not have been touched in the current branch
 
 ```
-// Make a line filter
-$git = new Git('/path/to/some/repo-directory');
-$lineFilterFactory = new LineFilterFactory($git);
-$lineFilter = $lineFilterFactory->makeLineFilter();
+// Get modifications for feature branch
+$git = new Git('/home/richard/Development/PlotBox/plotbox-app');
+$branchModificationsFactory = new BranchModificationsFactory($git);
+$branchModifications = $branchModificationsFactory->getBranchModifications();
+$lineFilter = new LineFilter($git, $branchModifications);
 
-// Pass in ci-issues to be filtered (third parameter 'attachment' can be anything you like)
+// Pass in ci-issues to be filtered
 $issues = [
     CodeIssue::make('devops/git/post-merge', 123, 'abc123'),
     CodeIssue::make('static/maintenance.html', 456, 'abc456')
