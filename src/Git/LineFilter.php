@@ -50,14 +50,6 @@ class LineFilter
     }
 
     /**
-     * @return BranchModifications
-     */
-    public function getBranchModifications()
-    {
-        return $this->branchModifications;
-    }
-
-    /**
      * Check an exact line of code to see if was touched
      *
      * @param RelativeFile $file
@@ -80,21 +72,6 @@ class LineFilter
         }
 
         if ($this->branchModifications->wasModified($file, $line)) {
-            return true;
-        }
-
-        // Not sure if below is needed anymore??
-        $lineCommit = null;
-        try {
-            $lineCommit = $this->gitService->getLastCommitForLineOfCode(
-                $filePath,
-                $line
-            );
-        } catch (LineUnstagedException $e) {
-            // Uncommitted line of code is always touched
-            return true;
-        } catch (LineNotExistException $e) {
-            // Possible de-sync between git and phpcs, just return true
             return true;
         }
 

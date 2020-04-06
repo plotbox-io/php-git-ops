@@ -62,27 +62,4 @@ class TouchedLines
             }
         }
     }
-
-    /**
-     * @param Git $git
-     * @return string[]
-     */
-    public function getAllCommits(Git $git)
-    {
-        $commits = [];
-        foreach ($this->changes as $path => $lineNumbers) {
-            foreach ($lineNumbers as $lineNumber) {
-                try {
-                    $commit = $git->getLastCommitForLineOfCode($path, $lineNumber);
-                    $commits[$commit->getName()] = $commit->getName();
-                } catch (LineNotExistException $e) {
-                    // Do nothing
-                } catch (LineUnstagedException $e) {
-                    // Do nothing
-                }
-            }
-        }
-
-        return $commits;
-    }
 }

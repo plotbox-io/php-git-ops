@@ -2,8 +2,6 @@
 
 namespace PlotBox\PhpGitOps\Git;
 
-use PlotBox\PhpGitOps\RelativeFile;
-
 class BranchModificationsFactory
 {
     /** @var Git */
@@ -29,7 +27,7 @@ class BranchModificationsFactory
         $ancestorBranch = $branchComparer->getAncestorBranch($currentBranch);
         return $this->getBranchModificationsSpecified(
             $this->git->getMergeBase($ancestorBranch, $currentBranch),
-            $this->git->getLatestCommit($currentBranch),
+            $this->git->getLatestCommit($currentBranch)
         );
     }
 
