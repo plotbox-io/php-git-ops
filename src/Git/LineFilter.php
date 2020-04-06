@@ -58,13 +58,14 @@ class LineFilter
      */
     private function lineWasTouched(RelativeFile $file, $line)
     {
-        if ($line === 1 && $this->firstLineAlwaysTouched) {
-            return true;
-        }
-
         $filePath = $file->getPath();
         if (!key_exists($filePath, $this->modifiedFiles)) {
             return false;
+        }
+
+        // File must have been touched to have the first line highlighted
+        if ($line === 1 && $this->firstLineAlwaysTouched) {
+            return true;
         }
 
         if ($this->branchModifications->isNewFile($file)) {
