@@ -4,11 +4,7 @@ namespace PlotBox\PhpGitOps\Git;
 
 use PlotBox\PhpGitOps\RelativeFile;
 
-/**
- * Value object holding data on the lines that have been touched that
- * are currently unstaged
- */
-class UnstagedChanges
+class TouchedLines
 {
     /** @var int[][] */
     private $changes = [];
@@ -65,5 +61,28 @@ class UnstagedChanges
                 unset($this->changes[$path]);
             }
         }
+    }
+
+    /**
+     * @param Git $git
+     * @return string[]
+     */
+    public function getAllCommits(Git $git)
+    {
+        $commits = [];
+        foreach ($this->changes as $path => $lineNumbers) {
+            foreach ($lineNumbers as $lineNumber) {
+                try {
+                    $commit = $git->getLastCommitForLineOfCode($path, $lineNumber);
+                    $commits[$commit->getName()] = $commit->getName();
+                } catch (LineNotExistException $e) {
+                    // Do nothing
+                } catch (LineUnstagedException $e) {
+                    // Do nothing
+                }
+            }
+        }
+
+        return $commits;
     }
 }

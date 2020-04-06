@@ -6,22 +6,21 @@ use PlotBox\PhpGitOps\RelativeFile;
 
 class BranchModifications
 {
-    /** @var RelativeFile[] */
+    /** @var TouchedLines */
     private $modifiedFiles;
     /** @var RelativeFile[] */
     private $newFiles;
     /** @var Commit[] */
     private $commits;
-    /** @var UnstagedChanges */
+    /** @var TouchedLines */
     private $unstagedChanges;
-
     /**
-     * @param RelativeFile[] $modifiedFiles
+     * @param TouchedLines $modifiedFiles
      * @param RelativeFile[] $newFiles
      * @param Commit[] $commits
-     * @param UnstagedChanges $unstagedChanges
+     * @param TouchedLines $unstagedChanges
      */
-    public function __construct(array $modifiedFiles, array $newFiles, array $commits, UnstagedChanges $unstagedChanges)
+    public function __construct(TouchedLines $modifiedFiles, array $newFiles, array $commits, TouchedLines $unstagedChanges)
     {
         $this->modifiedFiles = $modifiedFiles;
         $this->newFiles = [];
@@ -35,11 +34,16 @@ class BranchModifications
         }
     }
 
+    /**
+     * Filter out unwanted files according to some custom filter
+     *
+     * @param FileFilter $filter
+     */
     public function filter(FileFilter $filter)
     {
-        $this->modifiedFiles = $filter->getFilteredFiles($this->modifiedFiles);
-        $this->newFiles = $filter->getFilteredFiles($this->newFiles);
+        $this->modifiedFiles->filter($filter);
         $this->unstagedChanges->filter($filter);
+        $this->newFiles = $filter->getFilteredFiles($this->newFiles);
     }
 
     /**
@@ -50,16 +54,11 @@ class BranchModifications
      */
     public function getModifiedFilePaths()
     {
-        $modifiedFilesFromCommits = [];
-        foreach ($this->modifiedFiles as $file) {
-            $modifiedFilesFromCommits[] = $file->getPath();
-        }
-
         return array_unique(
             array_merge(
-                $modifiedFilesFromCommits,
-                array_keys($this->newFiles),
-                $this->unstagedChanges->getModifiedPaths()
+                $this->modifiedFiles->getModifiedPaths(),
+                $this->unstagedChanges->getModifiedPaths(),
+                array_keys($this->newFiles)
             )
         );
     }
@@ -74,19 +73,12 @@ class BranchModifications
     }
 
     /**
-     * @param Commit $commit
+     * @param $file
+     * @param $line
      * @return bool
      */
-    public function commitPartOfModifications(Commit $commit)
+    public function wasModified($file, $line)
     {
-        return key_exists($commit->getHash(), $this->commits);
-    }
-
-    /**
-     * @return UnstagedChanges
-     */
-    public function getUnstagedChanges()
-    {
-        return $this->unstagedChanges;
+        return $this->unstagedChanges->wasModified($file, $line) || $this->modifiedFiles->wasModified($file, $line);
     }
 }

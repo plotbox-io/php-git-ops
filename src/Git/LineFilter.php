@@ -13,6 +13,8 @@ class LineFilter
     private $gitService;
     /** @var BranchModifications */
     private $branchModifications;
+    /** @var bool */
+    private $firstLineAlwaysTouched;
 
     public function __construct(Git $gitService, BranchModifications $branchModifications)
     {
@@ -40,6 +42,22 @@ class LineFilter
     }
 
     /**
+     * @param bool $firstLineAlwaysTouched
+     */
+    public function setFirstLineAlwaysTouched($firstLineAlwaysTouched)
+    {
+        $this->firstLineAlwaysTouched = $firstLineAlwaysTouched;
+    }
+
+    /**
+     * @return BranchModifications
+     */
+    public function getBranchModifications()
+    {
+        return $this->branchModifications;
+    }
+
+    /**
      * Check an exact line of code to see if was touched
      *
      * @param RelativeFile $file
@@ -48,6 +66,10 @@ class LineFilter
      */
     private function lineWasTouched(RelativeFile $file, $line)
     {
+        if ($line === 1 && $this->firstLineAlwaysTouched) {
+            return true;
+        }
+
         $filePath = $file->getPath();
         if (!key_exists($filePath, $this->modifiedFiles)) {
             return false;
@@ -57,9 +79,11 @@ class LineFilter
             return true;
         }
 
-        if ($this->branchModifications->getUnstagedChanges()->wasModified($file, $line)) {
+        if ($this->branchModifications->wasModified($file, $line)) {
             return true;
         }
+
+        // Not sure if below is needed anymore??
         $lineCommit = null;
         try {
             $lineCommit = $this->gitService->getLastCommitForLineOfCode(
@@ -74,18 +98,6 @@ class LineFilter
             return true;
         }
 
-        if ($this->branchModifications->commitPartOfModifications($lineCommit)) {
-            return true;
-        }
-
         return false;
-    }
-
-    /**
-     * @return BranchModifications
-     */
-    public function getBranchModifications()
-    {
-        return $this->branchModifications;
     }
 }

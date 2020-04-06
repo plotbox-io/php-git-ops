@@ -73,17 +73,19 @@ class Git
     }
 
     /**
-     * @return UnstagedChanges
+     * @param DiffCommand $diffCommand
+     * @return TouchedLines
      * @see https://stackoverflow.com/a/24456418
      */
-    public function getUnstagedChanges()
+    public function parseTouchedLines(DiffCommand $diffCommand)
     {
-        $changes = new UnstagedChanges();
+        $changes = new TouchedLines();
 
         $modifiedFileRegex = '#^\+\+\+ .\/(.*)#';
         $nullFileRegex = '#^\+\+\+ (\/dev\/null)#';
         $changedLinesRegex = '#^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+(?:,[0-9]+)?)(?= @@)#';
-        $unifiedDiffResult = $this->cli->getResultArray('git diff --unified=0');
+        $command = $diffCommand->toString();
+        $unifiedDiffResult = $this->cli->getResultArray($command);
 
         $currentFilePath = null;
         foreach ($unifiedDiffResult as $resultLine) {
@@ -144,19 +146,6 @@ class Git
     }
 
     /**
-     * @param Commit $mergeBase
-     * @param Commit $current
-     * @return RelativeFile[]
-     */
-    public function getModifiedFiles(Pointer $mergeBase, Pointer $current)
-    {
-        $shellCommand = "git diff --diff-filter=d --name-only {$mergeBase->getName()} {$current->getName()} --raw";
-        $modifiedFiles = $this->cli->getResultArray($shellCommand);
-
-        return $this->toRelativeFiles($modifiedFiles);
-    }
-
-    /**
      * @param Branch $branch
      * @return Commit
      */
@@ -171,11 +160,11 @@ class Git
      * Finds the best common ancestor(s) between two commits. One common ancestor is better
      * than another common ancestor if the latter is an ancestor of the former
      *
-     * @param Branch $ancestor
-     * @param Branch $branch
+     * @param Pointer $ancestor
+     * @param Pointer $branch
      * @return Commit
      */
-    public function getMergeBase(Branch $ancestor, Branch $branch)
+    public function getMergeBase(Pointer $ancestor, Pointer $branch)
     {
         $shellCommand = "git merge-base \"{$branch->getName()}\" \"{$ancestor->getName()}\"";
         $hash = $this->cli->getResultString($shellCommand);
@@ -274,7 +263,7 @@ class Git
     public function findBranches($glob)
     {
         $escapedGlob = escapeshellarg($glob);
-        $shellCommand = "git branch --list {$escapedGlob}";
+        $shellCommand = "git branch --list --remotes {$escapedGlob}";
         $branches = $this->cli->getResultArray($shellCommand);
 
         $branchesResult = [];
