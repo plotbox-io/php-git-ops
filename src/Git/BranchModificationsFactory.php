@@ -43,21 +43,13 @@ class BranchModificationsFactory
         if (isset($this->branchModificationsCached[$cacheKey])) {
             return $this->branchModificationsCached[$cacheKey];
         }
-
-        // New files appear to be being picked up here also now. May be possible to
-        // drop the separate newly added files method below..
         $modifiedFiles = $this->git->parseTouchedLines(
-            new ComparisonDiffCommand(
-                $current,
-                $ancestorBranch
-            )
+            "git diff --unified=0 {$ancestorBranch->getName()}"
         );
         $newFiles = $this->git->getNewlyAddedFiles($mergeBase, $current);
-        $unstagedChanges = $this->git->parseTouchedLines(new UnstagedDiffCommand());
         $this->branchModificationsCached[$cacheKey] = new BranchModifications(
             $modifiedFiles,
-            $newFiles,
-            $unstagedChanges
+            $newFiles
         );
 
         return $this->branchModificationsCached[$cacheKey];

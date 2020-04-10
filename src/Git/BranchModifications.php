@@ -10,21 +10,18 @@ class BranchModifications
     private $modifiedFiles;
     /** @var RelativeFile[] */
     private $newFiles;
-    /** @var TouchedLines */
-    private $unstagedChanges;
+
     /**
      * @param TouchedLines $modifiedFiles
      * @param RelativeFile[] $newFiles
-     * @param TouchedLines $unstagedChanges
      */
-    public function __construct(TouchedLines $modifiedFiles, array $newFiles, TouchedLines $unstagedChanges)
+    public function __construct(TouchedLines $modifiedFiles, array $newFiles)
     {
         $this->modifiedFiles = $modifiedFiles;
         $this->newFiles = [];
         foreach ($newFiles as $newFile) {
             $this->newFiles[$newFile->getPath()] = $newFile;
         }
-        $this->unstagedChanges = $unstagedChanges;
     }
 
     /**
@@ -35,7 +32,6 @@ class BranchModifications
     public function filter(FileFilter $filter)
     {
         $this->modifiedFiles->filter($filter);
-        $this->unstagedChanges->filter($filter);
         $this->newFiles = $filter->getFilteredFiles($this->newFiles);
     }
 
@@ -50,7 +46,6 @@ class BranchModifications
         return array_unique(
             array_merge(
                 $this->modifiedFiles->getModifiedPaths(),
-                $this->unstagedChanges->getModifiedPaths(),
                 array_keys($this->newFiles)
             )
         );
@@ -72,6 +67,6 @@ class BranchModifications
      */
     public function wasModified($file, $line)
     {
-        return $this->unstagedChanges->wasModified($file, $line) || $this->modifiedFiles->wasModified($file, $line);
+        return $this->modifiedFiles->wasModified($file, $line);
     }
 }

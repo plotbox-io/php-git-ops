@@ -73,19 +73,18 @@ class Git
     }
 
     /**
-     * @param DiffCommand $diffCommand
+     * @param string $diffCommand
      * @return TouchedLines
      * @see https://stackoverflow.com/a/24456418
      */
-    public function parseTouchedLines(DiffCommand $diffCommand)
+    public function parseTouchedLines($diffCommand)
     {
         $changes = new TouchedLines();
 
         $modifiedFileRegex = '#^\+\+\+ .\/(.*)#';
         $nullFileRegex = '#^\+\+\+ (\/dev\/null)#';
         $changedLinesRegex = '#^@@ -[0-9]+(?:,[0-9]+)? \+([0-9]+(?:,[0-9]+)?)(?= @@)#';
-        $command = $diffCommand->toString();
-        $unifiedDiffResult = $this->cli->getResultArray($command);
+        $unifiedDiffResult = $this->cli->getResultArray($diffCommand);
 
         $currentFilePath = null;
         foreach ($unifiedDiffResult as $resultLine) {
