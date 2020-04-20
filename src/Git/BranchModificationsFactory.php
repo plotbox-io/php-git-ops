@@ -44,7 +44,7 @@ class BranchModificationsFactory
             return $this->branchModificationsCached[$cacheKey];
         }
         $modifiedFiles = $this->git->parseTouchedLines(
-            "git diff --unified=0 {$ancestorBranch->getName()}"
+            "git diff --unified=0 {$mergeBase->getName()}"
         );
         $newFiles = $this->git->getNewlyAddedFiles($mergeBase, $current);
         $this->branchModificationsCached[$cacheKey] = new BranchModifications(
