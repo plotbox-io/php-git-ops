@@ -74,13 +74,7 @@ class BranchComparer
                 $branchDistances[$ancestorBranch->getName()] = $distance;
             }
         }
-
-        // Sort by distance to common ancestor. If there is a tie, the order provided in the
-        // STANDARD_ANCESTORS constant will prevail (i.e., master, develop, sub-branches...)
-        asort($branchDistances);
-        reset($branchDistances);
-        $topBranchName = key($branchDistances);
-        return new Branch($topBranchName);
+        return $this->getClosestBranch($branchDistances);
     }
 
     /**
@@ -123,5 +117,40 @@ class BranchComparer
         }
 
         return $ancestors;
+    }
+
+    /**
+     * Sort by distance to common ancestor. If there is a tie, STANDARD_ANCESTORS will
+     * be preferred (i.e., master, develop)
+     *
+     * @param int[] $branchDistances
+     * @return Branch
+     */
+    private function getClosestBranch(array $branchDistances)
+    {
+        asort($branchDistances);
+
+        $topDistances = [];
+        $bestDistance = reset($branchDistances);
+        foreach ($branchDistances as $name => $distance) {
+            if ($distance === $bestDistance) {
+                $topDistances[$name] = $distance;
+            } else {
+                break;
+            }
+        }
+
+        // There was a tie. Prefer fixed ancestor if available
+        if (count($topDistances) > 1) {
+            foreach ($topDistances as $name => $distance) {
+                if (in_array($name, self::$fixedStandardAncestors)) {
+                    return new Branch($name);
+                }
+            }
+        }
+
+        reset($branchDistances);
+        $topBranchName = key($branchDistances);
+        return new Branch($topBranchName);
     }
 }
