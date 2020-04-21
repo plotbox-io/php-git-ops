@@ -10,13 +10,17 @@ class BranchModifications
     private $modifiedFiles;
     /** @var RelativeFile[] */
     private $newFiles;
+    /** @var Pointer */
+    private $parent;
 
     /**
+     * @param Pointer $parent
      * @param TouchedLines $modifiedFiles
      * @param RelativeFile[] $newFiles
      */
-    public function __construct(TouchedLines $modifiedFiles, array $newFiles)
+    public function __construct(Pointer $parent, TouchedLines $modifiedFiles, array $newFiles)
     {
+        $this->parent = $parent;
         $this->modifiedFiles = $modifiedFiles;
         $this->newFiles = [];
         foreach ($newFiles as $newFile) {
@@ -68,5 +72,13 @@ class BranchModifications
     public function wasModified($file, $line)
     {
         return $this->modifiedFiles->wasModified($file, $line);
+    }
+
+    /**
+     * @return Pointer
+     */
+    public function getParent()
+    {
+        return $this->parent;
     }
 }

@@ -48,6 +48,7 @@ class BranchModificationsFactory
         );
         $newFiles = $this->git->getNewlyAddedFiles($mergeBase, $current);
         $this->branchModificationsCached[$cacheKey] = new BranchModifications(
+            $ancestorBranch,
             $modifiedFiles,
             $newFiles
         );
