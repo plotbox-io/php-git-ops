@@ -65,14 +65,21 @@ class BranchComparer
         foreach ($this->getStandardAncestors() as $ancestorBranch) {
             // Note: If branch doesn't exist locally (i.e., sprint or release), we may be checking against
             // an older ancestor (develop/master), but that shouldn't be too bad..
-            if ($this->git->branchExists($ancestorBranch)) {
-                $ancestorBaseCommit = $this->git->getMergeBase($currentBranch, $ancestorBranch);
-                $distance = $this->distance($currentBranch, $ancestorBaseCommit);
-                if ($distance === null) {
-                    $distance = PHP_INT_MAX;
-                }
-                $branchDistances[$ancestorBranch->getName()] = $distance;
+            if (!$this->git->branchExists($ancestorBranch)) {
+                continue;
             }
+
+            // No point comparing to self (e.g., if is release branch)
+            if($this->endsWith($ancestorBranch->getName(), $currentBranch->getName())) {
+                continue;
+            }
+
+            $ancestorBaseCommit = $this->git->getMergeBase($currentBranch, $ancestorBranch);
+            $distance = $this->distance($currentBranch, $ancestorBaseCommit);
+            if ($distance === null) {
+                $distance = PHP_INT_MAX;
+            }
+            $branchDistances[$ancestorBranch->getName()] = $distance;
         }
         return $this->getClosestBranch($branchDistances);
     }
@@ -152,5 +159,19 @@ class BranchComparer
         reset($branchDistances);
         $topBranchName = key($branchDistances);
         return new Branch($topBranchName);
+    }
+
+    /**
+     * @param string $haystack
+     * @param string $needle
+     * @return bool
+     */
+    private function endsWith($haystack, $needle)
+    {
+        $length = strlen($needle);
+        if (!$length) {
+            return true;
+        }
+        return substr($haystack, -$length) === $needle;
     }
 }
