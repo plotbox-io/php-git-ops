@@ -15,7 +15,7 @@ class BranchComparer
     /** @var string[] */
     private static $globStandardAncestors = [
         'origin/sprint/*',
-        'origin/release/*',
+        'origin/*release/*'
     ];
     /** @var string[] */
     private static $fixedStandardAncestors = [
