@@ -133,12 +133,12 @@ class Git
             $count = count($lineData) === 1 ? 1 : (int) $lineData[1];
             $lastLine = $startLine + $count;
             $file = new RelativeFile($currentFilePath);
-            for ($currentLine = $startLine; $currentLine < $lastLine; $currentLine++) {
-                $changes->addTouchedLine(
-                    $file,
-                    $currentLine
-                );
-            }
+
+            $changes->addTouchedLines(
+                $file,
+                $startLine,
+                $lastLine - 1
+            );
         }
 
         return $changes;

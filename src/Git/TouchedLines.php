@@ -10,17 +10,18 @@ class TouchedLines
     private $changes = [];
 
     /**
-     * @param RelativeFile $file
-     * @param int $lineNumber
+     * @param int $firstLineInclusive
+     * @param int $lastLineInclusive
+     * @return void
      */
-    public function addTouchedLine(RelativeFile $file, $lineNumber)
+    public function addTouchedLines(RelativeFile $file, $firstLineInclusive, $lastLineInclusive)
     {
         $path = $file->getPath();
         if (!isset($this->changes[$path])) {
             $this->changes[$path] = [];
         }
 
-        $this->changes[$path][$lineNumber] = $lineNumber;
+        $this->changes[$path][] = "$firstLineInclusive-$lastLineInclusive";
     }
 
     /**
@@ -40,7 +41,18 @@ class TouchedLines
     {
         $path = $file->getPath();
 
-        return isset($this->changes[$path]) && key_exists($lineNumber, $this->changes[$path]);
+        if (!isset($this->changes[$path])) {
+            return false;
+        }
+
+        foreach ($this->changes[$path] as $lineChanges) {
+            list($firstLine, $lastLine) = explode('-', $lineChanges);
+            if ($lineNumber >= $firstLine && $lineNumber <= $lastLine) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public function filter(FileFilter $filter)
@@ -56,7 +68,7 @@ class TouchedLines
             $filteredIndex[$filteredFile->getPath()] = null;
         }
 
-        foreach ($this->changes as $path => $lines) {
+       foreach (array_keys($this->changes) as $path) {
             if (!array_key_exists($path, $filteredIndex)) {
                 unset($this->changes[$path]);
             }
