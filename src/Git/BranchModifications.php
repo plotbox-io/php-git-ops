@@ -28,6 +28,23 @@ class BranchModifications
         }
     }
 
+    /** @return string */
+    public function serialize()
+    {
+        $newFiles = [];
+        foreach ($this->newFiles as $newFile) {
+            $newFiles[] = $newFile->getPath();
+        }
+
+        $touchedLines = $this->modifiedFiles->getAllTouchedLines();
+        $data = (object) [
+            'added_files' => $newFiles,
+            'edited_lines' => $touchedLines
+        ];
+
+        return json_encode($data);
+    }
+
     /**
      * Filter out unwanted files according to some custom filter
      *

@@ -6,7 +6,7 @@ use PlotBox\PhpGitOps\RelativeFile;
 
 class TouchedLines
 {
-    /** @var int[][] */
+    /** @var string[][] */
     private $changes = [];
 
     /**
@@ -30,6 +30,12 @@ class TouchedLines
     public function getModifiedPaths()
     {
         return array_keys($this->changes);
+    }
+
+    /** @return array<string, string[]> */
+    public function getAllTouchedLines()
+    {
+        return $this->changes;
     }
 
     /**
