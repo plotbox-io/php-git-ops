@@ -336,7 +336,7 @@ class Git
     private function getUncommittedRenamedFiles()
     {
         $regex = <<<RGX
-/renamed: {4}([a-z0-9\/\\\.]+) -> ([a-z0-9\/\\\.]+)/i
+/renamed: {4}([\w\-\/\\\.]+) -> ([\w\-\/\\\.]+)/i
 RGX;
 
         $shellCommand = "git status | grep renamed:";
