@@ -1,0 +1,16 @@
+#!/usr/bin/env php
+<?php
+
+use PlotBox\PhpGitOps\Git\BranchModificationsFactory;
+use PlotBox\PhpGitOps\Git\Git;
+
+include __DIR__ . '/../vendor/autoload.php';
+
+ini_set('memory_limit', '2048M');
+define('PROJECT_ROOT', realpath(getcwd()));
+
+$git = new Git(PROJECT_ROOT);
+$git->fetchAll();
+$branchModificationFactory = new BranchModificationsFactory($git);
+$branchModifications = $branchModificationFactory->getBranchModifications();
+echo $branchModifications->getParent()->getName();
