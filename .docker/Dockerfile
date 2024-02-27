@@ -43,8 +43,8 @@ RUN chmod 400 /root/.ssh/config \
     && chown -R application:application /home/application/.ssh
 
 RUN pecl install xdebug && docker-php-ext-enable xdebug
-RUN rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
-    && touch /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+COPY ./.docker/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini
 
 WORKDIR /app
 
