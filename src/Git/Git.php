@@ -246,11 +246,7 @@ class Git
     public function branchExists(Branch $branch)
     {
         $branchName = $branch->getName();
-        if (StringUtil::startsWith($branchName, 'origin/')) {
-            $branchName = StringUtil::trimFromStart('origin/', $branchName);
-        }
-
-        $shellCommand = "git show-ref --verify --quiet refs/heads/{$branchName} && echo 'YES' || echo 'NO'";
+        $shellCommand = "git rev-parse --verify {$branchName} >/dev/null 2>&1 && echo 'YES' || echo 'NO'";
         $result = $this->cli->getResultString($shellCommand);
         return $result === 'YES';
     }
