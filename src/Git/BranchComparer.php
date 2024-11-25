@@ -14,8 +14,7 @@ class BranchComparer
     const CORE_BRANCH_NUM_BACK_FOR_DIFF = 10;
     /** @var string[] */
     private static $globStandardAncestors = [
-        'origin/sprint/*',
-        'origin/*release/*'
+        'origin/release/*'
     ];
     /** @var string[] */
     private static $fixedStandardAncestors = [
@@ -40,8 +39,8 @@ class BranchComparer
         $developCommit = $this->git->getCommit(new Branch(self::BRANCH_DEVELOP));
         $masterCommit = $this->git->getCommit(new Branch(self::BRANCH_MASTER));
 
-        if (StringUtil::startsWith($currentBranch->getName(), 'sprint')) {
-            return new Branch(self::BRANCH_DEVELOP);
+        if (StringUtil::startsWith($currentBranch->getName(), 'release')) {
+            return new Branch(self::BRANCH_MASTER);
         }
 
         if ($currentBranch->getName() === 'master' || $currentCommit->equals($masterCommit)) {

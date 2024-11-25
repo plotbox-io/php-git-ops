@@ -6,7 +6,8 @@ services:
     build:
       dockerfile: ./.docker/Dockerfile
       context: .
-      target: main
+      target: base
     pull_policy: always
     volumes:
       - .:/app
+      - /home/richard/Development/PlotBox/dea-web:/app/testing
