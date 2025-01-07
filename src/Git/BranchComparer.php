@@ -74,11 +74,9 @@ class BranchComparer
             }
 
             $ancestorBaseCommit = $this->git->getMergeBase($currentBranch, $ancestorBranch);
-            $distance = $this->distance($currentBranch, $ancestorBaseCommit);
-            if ($distance === null) {
-                $distance = PHP_INT_MAX;
-            }
-            $branchDistances[$ancestorBranch->getName()] = $distance;
+            $distance = $this->distance($currentBranch, $ancestorBaseCommit) ?? PHP_INT_MAX;
+            $distance2 = $this->distance($ancestorBranch, $ancestorBaseCommit) ?? PHP_INT_MAX;
+            $branchDistances[$ancestorBranch->getName()] = $distance + $distance2;
         }
         return $this->getClosestBranch($branchDistances);
     }
