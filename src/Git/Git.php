@@ -128,17 +128,19 @@ class Git
                 continue;
             }
 
-            $lineData = explode(',', $matchedText);
-            $startLine = (int) $lineData[0];
-            $count = count($lineData) === 1 ? 1 : (int) $lineData[1];
-            $lastLine = $startLine + $count;
-            $file = new RelativeFile($currentFilePath);
+            if ($currentFilePath) {
+                $lineData = explode(',', $matchedText);
+                $startLine = (int) $lineData[0];
+                $count = count($lineData) === 1 ? 1 : (int) $lineData[1];
+                $lastLine = $startLine + $count;
+                $file = new RelativeFile($currentFilePath);
 
-            $changes->addTouchedLines(
-                $file,
-                $startLine,
-                $lastLine - 1
-            );
+                $changes->addTouchedLines(
+                    $file,
+                    $startLine,
+                    $lastLine - 1
+                );
+            }
         }
 
         return $changes;
